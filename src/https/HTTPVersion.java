@@ -2,8 +2,8 @@ package https;
 
 public enum HTTPVersion {
 
-    HTTP_1 ("HTTP/1.0"),
-    HTTP_2 ("HTTP/2.0");
+    HTTP_1 ("HTTP/1.1"),
+    HTTP_2 ("HTTP/2.1");
     
     private final String version;
     

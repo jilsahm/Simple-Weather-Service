@@ -3,6 +3,9 @@ package https;
 import java.util.HashMap;
 import java.util.Optional;
 
+import util.Butler;
+import util.LogReason;
+
 public class DataPackage {
 
     private String                  startline;
@@ -21,9 +24,11 @@ public class DataPackage {
         
         output.append(this.startline);
         this.headers.forEach((key, value) -> output.append(String.format("%s: %s%n", key, value)));
-        output.append("\n\r\n\r");
-        output.append(this.payload);
+        output.append("\n");        
         
+        this.payload.ifPresent(output::append);
+        
+        Butler.log(LogReason.DEBUG, "DataPackage toString() = " + output.toString());
         return output.toString();
     }
     
