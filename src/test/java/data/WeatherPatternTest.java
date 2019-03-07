@@ -14,9 +14,9 @@ public final class WeatherPatternTest {
     private static String invalidHTML;
     
     @BeforeClass
-    public static void loadDummyWeatherData() {        
-        validHTML   = Butler.loadFile(WeatherPatternTest.class, "../testdata/valid.html").orElse("Test will fail");
-        invalidHTML = Butler.loadFile(WeatherPatternTest.class, "../testdata/invalid.html").orElse("Test will fail");
+    public static void loadDummyWeatherData() {
+        validHTML   = Butler.loadFile(WeatherPatternTest.class, "../test/valid.html").orElse("Test will fail");
+        invalidHTML = Butler.loadFile(WeatherPatternTest.class, "../test/invalid.html").orElse("Test will fail");
     }
     
     @Test

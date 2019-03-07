@@ -36,7 +36,6 @@ public class HttpsConnector {
 			reader.lines().forEach(line -> payload.append(line));			
 			reader.close();
 		} catch (IOException e) {}
-		
 		return payload.toString();
 	}
 	

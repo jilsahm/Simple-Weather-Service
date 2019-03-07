@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import data.WeatherPatternTest;
-
 public final class Butler {
 
     private static final SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
@@ -23,7 +21,7 @@ public final class Butler {
     }
     
     public static Optional<String> loadFile(final Class<?> rootPoint, final String relativeFromRootPoint) {
-        String rawPath  = rootPoint.getResource(relativeFromRootPoint).getPath();
+        String rawPath  = rootPoint.getClassLoader().getResource(relativeFromRootPoint).getPath();
         Path   filePath = FileSystems.getDefault().getPath(rawPath.substring(1));
         
         try {
