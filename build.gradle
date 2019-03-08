@@ -2,6 +2,7 @@ plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
 }
 
 sourceSets {
@@ -23,7 +24,11 @@ jar {
     manifest {
         attributes("Implementation-Title": "Simple-Weather-Service",
                    "Implementation-Version": 0.1,
-                   'Main-Class': 'https.HttpsConnector')
+                   //'Main-Class': 'https.HttpsConnector')
+                   'Main-Class': 'database.DatabaseAPI')
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
@@ -34,8 +39,12 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
 
+    implementation 'org.xerial:sqlite-jdbc:3.25.2'
+
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    //testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
 }
 
 // In this section you declare where to find the dependencies of your project

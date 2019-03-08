@@ -1,0 +1,3 @@
+@CLS
+@ECHO Testing unittests and building jar...
+@gradlew clean shadowJar

@@ -1,10 +1,10 @@
 package data;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import util.Butler;
 
@@ -13,10 +13,10 @@ public final class WeatherPatternTest {
     private static String validHTML;
     private static String invalidHTML;
     
-    @BeforeClass
+    @BeforeAll
     public static void loadDummyWeatherData() {
-        validHTML   = Butler.loadFile(WeatherPatternTest.class, "../test/valid.html").orElse("Test will fail");
-        invalidHTML = Butler.loadFile(WeatherPatternTest.class, "../test/invalid.html").orElse("Test will fail");
+        validHTML   = Butler.loadResource("valid.html").orElse("Test will fail");
+        invalidHTML = Butler.loadResource("invalid.html").orElse("Test will fail");
     }
     
     @Test
