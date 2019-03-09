@@ -18,6 +18,7 @@ test {
     testLogging {
         showStandardStreams = true
     }
+    useJUnitPlatform()
 }
 
 jar {
@@ -26,6 +27,7 @@ jar {
                    "Implementation-Version": 0.1,
                    //'Main-Class': 'https.HttpsConnector')
                    'Main-Class': 'database.DatabaseAPI')
+                   //'Main-Class': 'util.PathHolder')
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
@@ -38,11 +40,9 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
-
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
 
     // Use JUnit test framework
-    //testImplementation 'junit:junit:4.12'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
 }
