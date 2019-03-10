@@ -41,6 +41,11 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
+    
+    // Object Db
+    implementation 'com.objectdb:objectdb:+'
+    implementation 'org.eclipse.persistence:javax.persistence:+'
+    implementation 'javax.transaction:jta:+'
 
     // Use JUnit test framework
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
@@ -49,9 +54,10 @@ dependencies {
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    maven {
+      url 'http://m2.objectdb.com'
+    }
+    mavenCentral()
 }
 
 compileJava.options.encoding = 'cp1252'
