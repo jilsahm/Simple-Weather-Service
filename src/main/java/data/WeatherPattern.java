@@ -28,7 +28,7 @@ public enum WeatherPattern {
         Matcher matcher = this.pattern.matcher(rawWeatherData);
         
         if (matcher.find()) {
-            return Optional.of(new WeatherEntry(this.title, matcher.group(), this.unit));
+            return Optional.of(new WeatherEntry(this.title, Long.parseLong(matcher.group()), this.unit));
         }       
         
         return Optional.empty();

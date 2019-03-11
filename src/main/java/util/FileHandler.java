@@ -37,15 +37,13 @@ public class FileHandler {
     
     private void setupExternalDirectory() {
         File fileHandle = this.pathToExternalDirectory.toFile();
-        if (fileHandle.exists() && fileHandle.isDirectory()) {
-            Butler.log(LogReason.INFO, String.format("External directory %s allready exists.", DIRECTORY_NAME));
-        } else {
+        if (!fileHandle.exists() && !fileHandle.isDirectory()) {
             if (fileHandle.mkdir()) {
                 Butler.log(LogReason.INFO, String.format("Directory %s successfully created.", DIRECTORY_NAME));
             } else {
                 Butler.log(LogReason.ERROR, String.format("Failed to create directory %s.", DIRECTORY_NAME));
             }
-        }
+        }        
     }
     
     public void createFile(final String filename) {
