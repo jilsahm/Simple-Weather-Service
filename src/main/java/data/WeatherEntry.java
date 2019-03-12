@@ -16,14 +16,31 @@ public class WeatherEntry {
     private String unit;
     
     public WeatherEntry(final String title, final double value, final String unit) {
+        this(-1, title, value, unit);
+    }
+    
+    public WeatherEntry(final long id, final String title, final double value, final String unit) {
+        this.id    = id;
         this.title = title;
         this.value = value;
         this.unit  = unit;
     }
   
+    public long   getId()    { return this.id; }
     public String getTitle() { return this.title; }
     public double getValue() { return this.value; }
     public String getUnit()  { return this.unit; }    
+    
+    @Override
+    public boolean equals(Object other) {
+        if (null != other && other instanceof WeatherEntry) {
+            var o = (WeatherEntry)other;
+            return this.title.equals(o.getTitle())
+                && this.value == o.getValue()
+                && this.unit.equals(o.getUnit());
+        }
+        return false;
+    }
     
     @Override
     public String toString() {        

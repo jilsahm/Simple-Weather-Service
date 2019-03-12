@@ -25,32 +25,55 @@ public class ObjectDbAPI {
     
     private EntityManagerFactory managerFactory;
     private EntityManager        entityManager;
+    private Thread               shutdownThread;
     
     public ObjectDbAPI() {
         this(WEATHER_ODB_NAME);
     }
     
     public ObjectDbAPI(final String dbName) {
-        this.managerFactory = Persistence.createEntityManagerFactory(dbName);
+        final String path   = Path.of(new FileHandler().getAbsolutePathOfRootDirectory().toString(),dbName).toString();
+        this.managerFactory = Persistence.createEntityManagerFactory(path);
         this.entityManager  = this.managerFactory.createEntityManager();
+        this.registerShutdownHook();
+    }    
+    
+    private void registerShutdownHook() {
+        this.shutdownThread = new Thread(new Runnable() {            
+            @Override
+            public void run() {
+                shutdown();
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
     
-    @Override
-    protected void finalize() throws Throwable {
+    public void shutdown() {
         if (null != this.entityManager && this.entityManager.isOpen()) {
             this.entityManager.close();
         }
         if (null != this.managerFactory && this.managerFactory.isOpen()) {
             this.managerFactory.close();
         }
+        Runtime.getRuntime().removeShutdownHook(this.shutdownThread);
     }
     
-    public final <T> void saveEntity(T entity) {
+    @Override
+    protected void finalize() throws Throwable {        
+        this.shutdown();
+    }
+    
+    public final long numberOfEntities(final Class<?> type) {
+        Query result = this.entityManager.createQuery(String.format("SELECT COUNT(e) FROM %s e", type.getName()), type);
+        return (long)result.getSingleResult();
+    }
+    
+    public final <T> void saveEntity(final T entity) {
         this.saveAllEntities(entity);
     }
     
     @SafeVarargs
-    public final <T> void saveAllEntities(T ...entities) {
+    public final <T> void saveAllEntities(final T ...entities) {
         try {
             this.entityManager.getTransaction().begin();
             for (T entity : entities) {
@@ -67,13 +90,29 @@ public class ObjectDbAPI {
     }
     
     public final <T> T loadEntity(final Class<T> type, final long id) {
-        TypedQuery<T> query = this.entityManager.createQuery(String.format("SELECT * FROM %s WHERE id = %d", type.getName(), id), type);
-        return query.getSingleResult();
+        return this.entityManager.find(type, id);
     }
     
     public final <T> List<T> loadAllEntities(final Class<T> type) {
-        TypedQuery<T> query = this.entityManager.createQuery("SELECT * FROM " + type.getName(), type);
+        TypedQuery<T> query = this.entityManager.createQuery(String.format("SELECT e FROM %s e", type.getName()), type);
         return query.getResultList();
+    }
+    
+    public final <T> void deleteEntity(final T entity) {
+        this.deleteEntities(entity);
+    }
+    
+    @SafeVarargs
+    public final <T> void deleteEntities(final T ...entities) {
+        try {
+            this.entityManager.getTransaction().begin();
+            for (final T entity : entities) {
+                this.entityManager.remove(entity);
+            }            
+            this.entityManager.getTransaction().commit();
+        } catch(IllegalArgumentException e) {        
+            Butler.log(LogReason.ERROR, "Entities class is not persistable.");
+        }        
     }
     
     public static void main( String[] args ) {
