@@ -31,6 +31,10 @@ public class Weather {
         return this;
     }
     
+    public Date getTimestamp() {
+        return this.timestamp;
+    }
+    
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder(String.format("%d Weather from %s:", this.id, DATE_FORMAT.format(this.timestamp), this.weatherEntries.size()));

@@ -4,10 +4,12 @@ import java.nio.file.Path;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -15,6 +17,7 @@ import javax.persistence.TypedQuery;
 import data.Weather;
 import data.WeatherEntry;
 import util.Butler;
+import util.DateRange;
 import util.FileHandler;
 import util.LogReason;
 
@@ -89,8 +92,8 @@ public class ObjectDbAPI {
         }
     }
     
-    public final <T> T loadEntity(final Class<T> type, final long id) {
-        return this.entityManager.find(type, id);
+    public final <T> Optional<T> loadEntity(final Class<T> type, final long id) {
+        return Optional.ofNullable(this.entityManager.find(type, id));
     }
     
     public final <T> List<T> loadAllEntities(final Class<T> type) {
@@ -113,6 +116,23 @@ public class ObjectDbAPI {
         } catch(IllegalArgumentException e) {        
             Butler.log(LogReason.ERROR, "Entities class is not persistable.");
         }        
+    }
+    
+    public final Optional<Weather> fetchNewestWeatherData() {
+        TypedQuery<Weather> query = this.entityManager.createQuery("SELECT w FROM Weather w ORDER BY timestamp DESC", Weather.class);
+        try {            
+            return query.getResultStream().findFirst();
+        } catch (NoResultException e) {
+            Butler.log(LogReason.INFO, "Tried to fetch newest weather data but there is no data in the database.");
+        }
+        return Optional.empty();
+    }
+    
+    public final List<Weather> fetchWeatherData(final DateRange dateRange) {
+        TypedQuery<Weather> query = this.entityManager.createQuery("SELECT w FROM Weather w WHERE timestamp BETWEEN :from AND :to", Weather.class);
+        query.setParameter("from", dateRange.getFrom());
+        query.setParameter("to", dateRange.getTo());
+        return query.getResultList();
     }
     
     public static void main( String[] args ) {

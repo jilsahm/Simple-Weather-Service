@@ -16,11 +16,6 @@ public class WeatherEntry {
     private String unit;
     
     public WeatherEntry(final String title, final double value, final String unit) {
-        this(-1, title, value, unit);
-    }
-    
-    public WeatherEntry(final long id, final String title, final double value, final String unit) {
-        this.id    = id;
         this.title = title;
         this.value = value;
         this.unit  = unit;
