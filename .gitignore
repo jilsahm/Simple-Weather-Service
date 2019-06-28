@@ -1,5 +1,6 @@
 /bin/
 /build/
+/out/
 
 \.classpath
 
@@ -9,3 +10,5 @@
 
 \.settings/
 sql/
+
+\.idea/

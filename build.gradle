@@ -1,18 +1,23 @@
-plugins {
-    // Apply the java-library plugin to add support for Java Library
-    id 'java-library'
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '5.0.0'
+buildscript {
+    ext {
+        springBootVersion = '2.1.6.RELEASE'
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.40")
+    }
+    repositories {
+        maven {
+            url 'http://m2.objectdb.com'
+        }
+        mavenCentral()
+    }
 }
 
-sourceSets {
-    main {
-        java.srcDir "main/java"
-    }
-    test{
-        java.srcDir "test/java"
-    }
-}
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'kotlin'
 
 test {
     testLogging {
@@ -21,45 +26,38 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes("Implementation-Title": "Simple-Weather-Service",
-                   "Implementation-Version": 0.1,
-                   //'Main-Class': 'https.HttpsConnector')
-                   'Main-Class': 'database.DatabaseAPI')
-                   //'Main-Class': 'util.PathHolder')
-    }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
+    compile 'org.springframework.boot:spring-boot-starter-webflux'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:23.0'
-    implementation 'org.xerial:sqlite-jdbc:3.25.2'
-    
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.3.40'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
+
     // Object Db
     implementation 'com.objectdb:objectdb:+'
     implementation 'org.eclipse.persistence:javax.persistence:+'
     implementation 'javax.transaction:jta:+'
 
     // Use JUnit test framework
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.+'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.+'
+    testImplementation('org.springframework.boot:spring-boot-starter-test'){
+        exclude group: 'junit', module: 'junit'
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.2'
 }
 
-// In this section you declare where to find the dependencies of your project
 repositories {
     maven {
-      url 'http://m2.objectdb.com'
+        url 'http://m2.objectdb.com'
     }
     mavenCentral()
 }
 
-compileJava.options.encoding = 'cp1252'
-compileTestJava.options.encoding = 'cp1252'
-javadoc.options.encoding = 'cp1252'
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
